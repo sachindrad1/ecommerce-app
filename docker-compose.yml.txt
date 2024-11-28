@@ -1,0 +1,33 @@
+version: &#39;3.8&#39;
+services:
+frontend:
+build: ./frontend
+ports:
+- &quot;80:80&quot;
+networks:
+- ecommerce
+backend:
+build: ./backend
+environment:
+- DATABASE_URL=postgres://user:password@db:5432/ecommerce_db
+ports:
+- &quot;5000:5000&quot;
+depends_on:
+- db
+networks:
+- ecommerce
+db:
+image: postgres:13
+environment:
+POSTGRES_USER: user
+POSTGRES_PASSWORD: password
+POSTGRES_DB: ecommerce_db
+volumes:
+- postgres_data:/var/lib/postgresql/data
+networks:
+- ecommerce
+networks:
+ecommerce:
+
+volumes:
+postgres_data:

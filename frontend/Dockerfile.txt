@@ -1,0 +1,14 @@
+# Use an official Node.js runtime as the base image
+FROM node:16 AS build
+# Set the working directory in the container
+WORKDIR /app
+# Install dependencies and build the project
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+# Nginx is a good option for serving the static content
+FROM nginx:alpine
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD [&quot;nginx&quot;, &quot;-g&quot;, &quot;daemon off;&quot;]

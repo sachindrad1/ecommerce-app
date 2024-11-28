@@ -1,0 +1,82 @@
+pipeline {
+agent any
+environment {
+FRONTEND_IMAGE = &#39;your-docker-repo/node:16 AS build;
+BACKEND_IMAGE = &#39;your-docker-repo/python:3.9-slim;
+}
+stages {
+stage(&#39;Checkout&#39;) {
+steps {
+// Checkout the code from the Git repository
+checkout scm
+}
+}
+stage(&#39;Build Frontend&#39;) {
+steps {
+script {
+// Build the frontend Docker image
+sh &#39;docker build -t $FRONTEND_IMAGE ./frontend&#39;
+}
+}
+}
+stage(&#39;Build Backend&#39;) {
+steps {
+script {
+// Build the backend Docker image
+sh &#39;docker build -t $BACKEND_IMAGE ./backend&#39;
+}
+}
+}
+stage(&#39;Test Frontend&#39;) {
+steps {
+script {
+// Run unit tests for frontend (assuming Jest)
+sh &#39;cd frontend &amp;&amp; npm test&#39;
+}
+}
+}
+stage(&#39;Test Backend&#39;) {
+
+steps {
+script {
+// Run unit tests for backend (assuming pytest)
+sh &#39;cd backend &amp;&amp; pytest&#39;
+}
+}
+}
+stage(&#39;Push Docker Images&#39;) {
+steps {
+script {
+// Push Docker images to the Docker registry (e.g.,
+Docker Hub or AWS ECR)
+sh &#39;docker push $FRONTEND_IMAGE&#39;
+sh &#39;docker push $BACKEND_IMAGE&#39;
+}
+}
+}
+stage(&#39;Deploy&#39;) {
+steps {
+script {
+// Deploy using Docker Compose or Kubernetes, etc.
+sh &#39;docker-compose -f docker-compose.yml up -d&#39;
+}
+}
+}
+stage(&#39;Cleanup&#39;) {
+steps {
+script {
+// Remove the Docker images after deployment
+sh &#39;docker rmi $FRONTEND_IMAGE $BACKEND_IMAGE&#39;
+}
+}
+}
+}
+post {
+success {
+echo &#39;Deployment succeeded!&#39;
+}
+failure {
+echo &#39;Deployment failed!&#39;
+}
+}
+}
