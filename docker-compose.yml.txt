@@ -1,9 +1,9 @@
-version: &#39;3.8&#39;
+version: '3.8'
 services:
 frontend:
 build: ./frontend
 ports:
-- &quot;80:80&quot;
+- "80:80"
 networks:
 - ecommerce
 backend:
@@ -11,7 +11,7 @@ build: ./backend
 environment:
 - DATABASE_URL=postgres://user:password@db:5432/ecommerce_db
 ports:
-- &quot;5000:5000&quot;
+"5000:5000"
 depends_on:
 - db
 networks:
